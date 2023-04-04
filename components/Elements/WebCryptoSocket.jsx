@@ -1,5 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button } from "@nextui-org/react";
+import {
+  Stat,
+  StatArrow,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
+  Box,
+  SkeletonCircle,
+  SkeletonText,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 const WebHandle = ({
@@ -35,27 +44,32 @@ const WebCryptoSocket = ({
       <WebHandle wssUrl={wssUrl} handleData={handleData} />
       {data !== null ? (
         <>
-          <p className="uppercase">
-            {data.stream?.substring(
-              "market.ticker.thb_".length,
-              data.stream.length
-            )}
-          </p>
-          <p>Price:{data?.last ? data?.last?.toLocaleString() : 0}</p>
-          <p>
-            Cost:{cost ? cost?.toLocaleString() : 0}:::{cost / data?.last}
-          </p>
-          <p>Change:{data?.percentChange}%</p>
-          <p>
-            High:{data?.highestBid?.toLocaleString()} =={" "}
-            {data?.high24hr?.toLocaleString()}
-          </p>
-          <p>
-            Low:{data?.lowestAsk?.toLocaleString()} =={" "}
-            {data?.low24hr?.toLocaleString()}
-          </p>
+          <Stat>
+            <StatLabel>
+              <span className="uppercase">
+                {data.stream?.substring(
+                  "market.ticker.thb_".length,
+                  data.stream.length
+                )}
+              </span>
+            </StatLabel>
+            <StatNumber>
+              {data?.last ? data?.last?.toLocaleString() : 0}
+            </StatNumber>
+            <StatHelpText>
+              <StatArrow
+                type={data?.percentChange > 0 ? "increase" : "decrease"}
+              />
+              {data?.percentChange}%
+            </StatHelpText>
+          </Stat>
         </>
-      ) : null}
+      ) : (
+        <Box padding="6" boxShadow="lg" bg="white">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={4} spacing="4" skeletonHeight="2" />
+        </Box>
+      )}
     </>
   );
 };

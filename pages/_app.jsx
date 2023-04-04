@@ -3,6 +3,7 @@ import { createTheme, NextUIProvider } from "@nextui-org/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Inter } from "next/font/google";
 import { WagmiConfig, createClient, configureChains, mainnet } from "wagmi";
+import { getDefaultProvider } from "ethers";
 import { publicProvider } from "wagmi/providers/public";
 
 const { chains, provider, webSocketProvider } = configureChains(
@@ -12,7 +13,7 @@ const { chains, provider, webSocketProvider } = configureChains(
 
 const client = createClient({
   autoConnect: true,
-  provider,
+  provider: getDefaultProvider(),
   webSocketProvider,
 });
 

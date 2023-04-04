@@ -1,27 +1,58 @@
 import web3 from "web3";
 import { Button } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useEnsAvatar,
+  useEnsName,
+} from "wagmi";
 
 const ConnectWallet = () => {
+  const { address, connector, isConnected } = useAccount();
+  const { data: ensAvatar } = useEnsAvatar({ address });
+  const { data: ensName } = useEnsName({ address });
+  const { connect, connectors, error, isLoading, pendingConnector } =
+    useConnect();
+  const { disconnect } = useDisconnect();
   const [walletAddress, setWalletAddress] = useState(null);
-  const [inputValue, setInputValue] = useState("");
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
-  const connectWallet = async () => {
-    try {
-      const { ethereum } = window;
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      const account = accounts[0];
-      setWalletAddress(accounts[0]);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    console.log(`Wallet connect: ${isConnected}`);
+    console.log(`Wallet name: ${ensName}`);
+  }, [isConnected]);
+
+  if (!hasMounted) return null;
+
   return (
     <>
-      <Button onPress={connectWallet}>Connect {walletAddress}</Button>
+      {isConnected ? (
+        <div>
+          <Button auto>Connect {address}</Button>
+          {connectors.map((connector) => (
+            <button
+              disabled={!connector.ready}
+              key={connector.id}
+              onClick={() => connect({ connector })}
+            >
+              {connector.name}
+              {!connector.ready && " (unsupported)"}
+              {isLoading &&
+                connector.id === pendingConnector?.id &&
+                " (connecting)"}
+            </button>
+          ))}
+
+          {error && <div>{error.message}</div>}
+          <p>{ensAvatar}</p>
+        </div>
+      ) : null}
     </>
   );
 };
