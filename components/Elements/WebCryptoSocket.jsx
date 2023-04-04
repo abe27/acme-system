@@ -28,7 +28,7 @@ const WebCryptoSocket = ({
   wssUrl = "wss://api.bitkub.com/websocket-api/market.ticker.thb_bnb",
   cost = 1000,
 }) => {
-  const [data, setData] = useState({});
+  const [data, setData] = useState(null);
 
   const handleData = (e) => {
     try {
@@ -43,7 +43,7 @@ const WebCryptoSocket = ({
     <>
       <WebHandle wssUrl={wssUrl} handleData={handleData} />
       {data !== null ? (
-        <>
+        <div className=" p-4 w-52">
           <Stat>
             <StatLabel>
               <span className="uppercase">
@@ -63,12 +63,14 @@ const WebCryptoSocket = ({
               {data?.percentChange}%
             </StatHelpText>
           </Stat>
-        </>
+        </div>
       ) : (
-        <Box padding="6" boxShadow="lg" bg="white">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={4} spacing="4" skeletonHeight="2" />
-        </Box>
+        <div className="w-52">
+          <Box padding="6" boxShadow="lg" bg="white">
+            <SkeletonCircle size="10" />
+            <SkeletonText mt="2" noOfLines={2} spacing="4" skeletonHeight="1" />
+          </Box>
+        </div>
       )}
     </>
   );
